@@ -1490,8 +1490,8 @@ class Recognizer(AudioSource):
         audio_array, sampling_rate = sf.read(wav_stream)
         audio_array = audio_array.astype(np.float32)
 
-        segments, _ = self.whisper_model[model].transcribe(audio_array)
-        result = ''.join([segment.text for segment in segments])
+        segments, info  = self.whisper_model[model].transcribe(audio_array, task="translate" if translate else None, **transcribe_options)
+        text_result = ''.join([segment.text for segment in segments])
 
         #result = self.whisper_model[model].transcribe(
         #    audio_array,
@@ -1500,12 +1500,12 @@ class Recognizer(AudioSource):
         #    fp16=torch.cuda.is_available(),
         #    **transcribe_options
         #)
-        return result
+        #return text_result
 
-        #if show_dict:
-        #    return result
-        #else:
-        #    return result["text"]
+        if show_dict:
+            return text_result, info
+        else:
+            return text_result
 
     recognize_whisper_api = whisper.recognize_whisper_api
             
